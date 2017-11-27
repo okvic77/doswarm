@@ -1,6 +1,6 @@
 {
   "variables": {
-    "terraformUser": "",
+    "packer_image": "",
     "digitalOceanToken": ""
   },
   "builders": [
@@ -31,7 +31,7 @@
   "post-processors": [
     {
       "type": "atlas",
-      "artifact": "{{user `terraformUser`}}/docker-base",
+      "artifact": "{{user `packer_image`}}",
       "artifact_type": "digitalocean.image",
       "metadata": {
         "created_at": "{{timestamp}}"

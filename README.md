@@ -2,9 +2,14 @@
 
 Create a docker swarm on Digitalocean within minutes.
 
-```bash
+```sh
+# Run once, or to update Docker
+packer build -var 'packer_image=CHANGE/base' -var 'digitalOceanToken=XXX' packer.json
 
-packer build -var 'terraformUser=okvic77' -var 'digitalOceanToken=XXX' packer.json
-terraform apply
+# Run to initialize terraform
+terraform init
+
+# Run when required, to scale, upgrade or delete.
+terraform apply -var digitalocean_token=XXX -var packer_image=CHANGE/base
 
 ```

@@ -1,5 +1,5 @@
 data "atlas_artifact" "base" {
-  name = "CHANGEHERE/docker-base"
+  name = "${var.packer_image}"
   type = "digitalocean.image"
   version = "1"
 }
@@ -21,7 +21,7 @@ output "sshmaster" {
 
 resource "digitalocean_droplet" "manager" {
   # ssh_keys = ["xx"]
-  count = 2
+  count = "${var.swarm_managers}"
   name = "${terraform.env}-manager-${count.index + 1}"
   image = "${element(split(":", data.atlas_artifact.base.id), 1)}"
   region = "sfo2"
@@ -39,7 +39,7 @@ EOF
 
 resource "digitalocean_droplet" "worker" {
   # ssh_keys = ["xx"]
-  count = 2
+  count = "${var.swarm_workers}"
   name = "${terraform.env}-worker-${count.index + 1}"
   image = "${element(split(":", data.atlas_artifact.base.id), 1)}"
   region = "sfo2"
