@@ -1,0 +1,41 @@
+{
+  "variables": {
+    "terraformUser": "",
+    "digitalOceanToken": ""
+  },
+  "builders": [
+    {
+      "type": "digitalocean",
+      "api_token": "{{user `digitalOceanToken`}}",
+      "image": "ubuntu-17-04-x64",
+      "droplet_name": "packer-{{uuid}}",
+      "region": "sfo1",
+      "size": "512mb",
+      "ssh_username": "root",
+      "snapshot_name": "dockerbase-{{timestamp}}",
+      "snapshot_regions": ["sfo1", "sfo2"]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -",
+        "curl -sSL https://agent.digitalocean.com/install.sh | sh",
+        "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
+        "apt-get update",
+        "apt-get install -y docker-ce"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "atlas",
+      "artifact": "{{user `terraformUser`}}/docker-base",
+      "artifact_type": "digitalocean.image",
+      "metadata": {
+        "created_at": "{{timestamp}}"
+      }
+    }
+  ]
+}
