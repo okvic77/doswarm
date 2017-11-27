@@ -1,7 +1,7 @@
 data "atlas_artifact" "base" {
   name = "${var.packer_image}"
   type = "digitalocean.image"
-  version = "1"
+  version = "${var.version}"
 }
 
 resource "digitalocean_droplet" "master" {
@@ -12,7 +12,7 @@ resource "digitalocean_droplet" "master" {
   private_networking = true
   resize_disk = false
   user_data = "${file("./prov-master.sh")}"
-  # ssh_keys = ["xx"]
+  ssh_keys = ["${var.ssh_keys}"]
 }
 
 output "sshmaster" {
@@ -20,7 +20,7 @@ output "sshmaster" {
 }
 
 resource "digitalocean_droplet" "manager" {
-  # ssh_keys = ["xx"]
+  ssh_keys = ["${var.ssh_keys}"]
   count = "${var.swarm_managers}"
   name = "${terraform.env}-manager-${count.index + 1}"
   image = "${element(split(":", data.atlas_artifact.base.id), 1)}"
@@ -38,7 +38,7 @@ EOF
 
 
 resource "digitalocean_droplet" "worker" {
-  # ssh_keys = ["xx"]
+  ssh_keys = ["${var.ssh_keys}"]
   count = "${var.swarm_workers}"
   name = "${terraform.env}-worker-${count.index + 1}"
   image = "${element(split(":", data.atlas_artifact.base.id), 1)}"
